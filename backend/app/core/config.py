@@ -1,62 +1,64 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
 class Settings(BaseSettings):
+    """
+    Application settings loaded from environment variables.
+    """
+
     # ==========================
     # Application
     # ==========================
-    app_name: str = "Vetino API"
-    app_version: str = "1.0.0"
-    environment: str = "development"
-    debug: bool = True
+    app_name: str = Field(..., alias="APP_NAME")
+    app_version: str = Field(..., alias="APP_VERSION")
+    environment: str = Field(..., alias="ENVIRONMENT")
+    debug: bool = Field(False, alias="DEBUG")
 
     # ==========================
-    # API
+    # Database
     # ==========================
-    api_v1_prefix: str = "/api/v1"
+    db_host: str = Field(..., alias="DB_HOST")
+    db_port: int = Field(..., alias="DB_PORT")
+    db_name: str = Field(..., alias="DB_NAME")
+    db_user: str = Field(..., alias="DB_USER")
+    db_password: str = Field(..., alias="DB_PASSWORD")
 
     # ==========================
     # Security
     # ==========================
     secret_key: str = Field(..., alias="SECRET_KEY")
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
-
-    # ==========================
-    # Database
-    # ==========================
-    postgres_host: str = "localhost"
-    postgres_port: int = 5432
-    postgres_db: str = "vetino"
-    postgres_user: str = "vetino"
-    postgres_password: str
-
-    # ==========================
-    # CORS
-    # ==========================
-    backend_cors_origins: list[str] = ["http://localhost:3000"]
+    algorithm: str = Field(..., alias="ALGORITHM")
+    access_token_expire_minutes: int = Field(
+        ..., alias="ACCESS_TOKEN_EXPIRE_MINUTES"
+    )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=BASE_DIR / ".env",
+        env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
     )
 
     @property
     def database_url(self) -> str:
+        """Build the SQLAlchemy database URL."""
         return (
             f"postgresql+psycopg2://"
-            f"{self.postgres_user}:{self.postgres_password}"
-            f"@{self.postgres_host}:{self.postgres_port}/"
-            f"{self.postgres_db}"
+            f"{self.db_user}:{self.db_password}"
+            f"@{self.db_host}:{self.db_port}/{self.db_name}"
         )
 
 
 @lru_cache
 def get_settings() -> Settings:
+    """Return cached application settings."""
     return Settings()
 
 
