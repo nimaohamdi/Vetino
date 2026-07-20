@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: vetino-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: vetino
+      POSTGRES_USER: vetino
+      POSTGRES_PASSWORD: change_me
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vetino"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
