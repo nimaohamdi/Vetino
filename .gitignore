@@ -1,19 +1,35 @@
-# Python
-__pycache__/
+# Python cache
+**/__pycache__/
 *.py[cod]
-venv/
-env/
-.venv/
+*.pyo
 
-# Django
+# Virtual environments
+**/.venv/
+**/venv/
+**/env/
+
+# Environment files
+**/.env
+**/.env.*
+!.env.example
+
+# Python tooling
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+
+# Logs
 *.log
-db.sqlite3
-db.sqlite3-journal
-media/
-staticfiles/
-.env
 
-# IDE / OS
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# IDE
 .vscode/
 .idea/
+
+# OS
 .DS_Store
+Thumbs.db
