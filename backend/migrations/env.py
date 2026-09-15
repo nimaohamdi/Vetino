@@ -8,7 +8,7 @@ from alembic import context
 from app.core.config import settings
 from app.db.base import Base
 
-from app.models import Role
+from app.modules.users.domain.models import Role, User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -47,7 +47,7 @@ def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
-        target_metadata = Base.metadata,
+        target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
